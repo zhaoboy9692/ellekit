@@ -86,12 +86,12 @@ deb-ios-rootful deb-ios-rootless: build-ios
 	@mkdir -p $(INSTALL_ROOT)/etc/rc.d
 	@ln -s ${INSTALL_PREFIX}/usr/libexec/ellekot/loader $(INSTALL_ROOT)/etc/rc.d/ellekot-loader
 
-	@mkdir -p $(INSTALL_ROOT)/usr/lib/TweakInject
+	@mkdir -p $(INSTALL_ROOT)/usr/lib/TweakLnject
 
 	@mkdir -p $(INSTALL_ROOT)/Library/Frameworks/CydiaSubstrate.framework
 	@ln -s ${INSTALL_PREFIX}/usr/lib/libellekit.dylib $(INSTALL_ROOT)/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate
 	@mkdir -p $(INSTALL_ROOT)/Library/MobileSubstrate
-	@ln -s ${INSTALL_PREFIX}/usr/lib/TweakInject $(INSTALL_ROOT)/Library/MobileSubstrate/DynamicLibraries
+	@ln -s ${INSTALL_PREFIX}/usr/lib/TweakLnject $(INSTALL_ROOT)/Library/MobileSubstrate/DynamicLibraries
 
 	@mkdir -p $(STAGE_DIR)/DEBIAN
 	@sed -e "s|@DEB_VERSION@|$(DEB_VERSION)|g" -e "s|@DEB_ARCH@|$(ARCHITECTURE)|g" packaging/control >$(STAGE_DIR)/DEBIAN/control
@@ -113,7 +113,7 @@ deb-macos: build-macos
 	@mkdir -p $(STAGE_DIR)
 
 	@# Because BSD install does not support -D
-	@mkdir -p $(INSTALL_ROOT)/Library/TweakInject
+	@mkdir -p $(INSTALL_ROOT)/Library/TweakLnject
 	@mkdir -p $(INSTALL_ROOT)/Library/Frameworks
 	@mkdir -p $(INSTALL_ROOT)/usr/local/bin
 	@mkdir -p $(INSTALL_ROOT)/usr/local/lib
@@ -122,12 +122,12 @@ deb-macos: build-macos
 	@install -m644 $(PRODUCTS_DIR)/pspawn.dylib $(INSTALL_ROOT)/Library/TweakInject/pspawn.dylib
 	@install -m755 $(PRODUCTS_DIR)/loader $(INSTALL_ROOT)/usr/local/bin/loader
 
-	@find $(INSTALL_ROOT)/Library/TweakInject -type f -exec ldid -S {} \;
+	@find $(INSTALL_ROOT)/Library/TweakLnject -type f -exec ldid -S {} \;
 	@find $(INSTALL_ROOT)/usr/local/ -type f -exec ldid -S {} \;
 
-	@ln -s $(INSTALL_PREFIX)/Library/TweakInject/ellekit.dylib $(INSTALL_ROOT)/usr/local/lib/libsubstrate.dylib
-	@ln -s $(INSTALL_PREFIX)/Library/TweakInject/ellekit.dylib $(INSTALL_ROOT)/Library/Frameworks/libsubstrate.dylib
-	@ln -s $(INSTALL_PREFIX)/Library/TweakInject/ellekit.dylib $(INSTALL_ROOT)/Library/Frameworks/ellekit.dylib
+	@ln -s $(INSTALL_PREFIX)/Library/TweakLnject/ellekit.dylib $(INSTALL_ROOT)/usr/local/lib/libsubstrate.dylib
+	@ln -s $(INSTALL_PREFIX)/Library/TweakLnject/ellekit.dylib $(INSTALL_ROOT)/Library/Frameworks/libsubstrate.dylib
+	@ln -s $(INSTALL_PREFIX)/Library/TweakLnject/ellekit.dylib $(INSTALL_ROOT)/Library/Frameworks/ellekit.dylib
 
 	@mkdir -p $(INSTALL_ROOT)/usr/local/share/doc/ellekit
 	@install -m644 LICENSE $(INSTALL_ROOT)/usr/local/share/doc/ellekit/LICENSE
