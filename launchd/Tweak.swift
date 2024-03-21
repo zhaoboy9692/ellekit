@@ -38,10 +38,10 @@ class Tweak {
 
 func getTweaksPath() -> String {
     #if os(macOS)
-    return "/Library/TweakInject/"
+    return "/Library/TweakLnject/"
     #else
-    if access("/var/jb/usr/lib/TweakInject/", F_OK) == 0 {
-        return (("/var/jb/usr/lib/TweakInject/" as NSString).resolvingSymlinksInPath)+"/"
+    if access("/var/jb/usr/lib/TweakLnject/", F_OK) == 0 {
+        return (("/var/jb/usr/lib/TweakLnject/" as NSString).resolvingSymlinksInPath)+"/"
     } else {
         return (("/Library/MobileSubstrate/DynamicLibraries/" as NSString).resolvingSymlinksInPath)+"/"
     }

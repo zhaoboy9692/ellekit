@@ -38,7 +38,7 @@ struct TextLog: TextOutputStream {
         #if !os(macOS)
         FileManager.default.fileExists(atPath: "/private/var/mobile/.ekenabulelogging")
         #else
-        FileManager.default.fileExists(atPath: "/Library/TweakInject/.ekenabulelogging")
+        FileManager.default.fileExists(atPath: "/Library/TweakLnject/.ekenabulelogging")
         #endif
     }
     

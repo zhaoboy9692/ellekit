@@ -33,7 +33,7 @@ class retain {
     
     static func getPath() -> String {
         #if os(macOS)
-        return "/Library/TweakInject/pspawn.dylib"
+        return "/Library/TweakLnject/pspawn.dylib"
         #else
         if access("/usr/lib/ellekot/pspawn.dylib", F_OK) == 0 {
             return "/usr/lib/ellekot/pspawn.dylib"

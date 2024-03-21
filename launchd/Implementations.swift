@@ -249,7 +249,7 @@ func spawn_replacement(
     #if os(macOS)
     let file_extension = sandbox_extension_issue_file(
         APP_SANDBOX_READ_WRITE,
-        ("/Library/TweakInject" as NSString).resolvingSymlinksInPath,
+        ("/Library/TweakLnject" as NSString).resolvingSymlinksInPath,
         0
     )
     #else

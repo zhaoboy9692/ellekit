@@ -6,7 +6,7 @@ abort() {
 }
 
 OLDPATH="@INSTALL_PREFIX@/Library/MobileSubstrate/DynamicLibraries"
-NEWPATH="@INSTALL_PREFIX@/usr/lib/TweakInject"
+NEWPATH="@INSTALL_PREFIX@/usr/lib/TweakLnject"
 
 if [ "$1" != "install" ]; then
     exit 0
@@ -15,14 +15,14 @@ fi
 if ! [ -d "$NEWPATH" ]; then
     if [ -e "$NEWPATH" ]; then
         # WTF?
-        abort "TweakInject exists and is not a directory"
+        abort "TweakLnject exists and is not a directory"
     fi
-    mkdir "$NEWPATH" || abort "Failed to create TweakInject directory"
+    mkdir "$NEWPATH" || abort "Failed to create TweakLnject directory"
 fi
 
 if ! [ -L "$OLDPATH" ]; then
     if [ -d "$OLDPATH" ]; then
-        mv "$OLDPATH"/* "$NEWPATH" || abort "Failed to copy DynamicLibraries to TweakInject"
+        mv "$OLDPATH"/* "$NEWPATH" || abort "Failed to copy DynamicLibraries to TweakLnject"
         rm -rf "$OLDPATH" || abort "Failed to remove DynamicLibraries"
     fi
     if [ -e "$OLDPATH" ]; then
@@ -30,7 +30,7 @@ if ! [ -L "$OLDPATH" ]; then
         abort "DynamicLibraries exists and is not a symlink"
     fi
     mkdir -p "@INSTALL_PREFIX@/Library/MobileSubstrate" || abort "Failed to create MobileSubstrate directory"
-    ln -s "$NEWPATH" "$OLDPATH" || abort "Failed to symlink DynamicLibraries to TweakInject"
+    ln -s "$NEWPATH" "$OLDPATH" || abort "Failed to symlink DynamicLibraries to TweakLnject"
 fi
 
 exit 0

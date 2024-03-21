@@ -26,10 +26,10 @@ static int isApp(const char* path) {
 }
 
 #if TARGET_OS_OSX
-#define TWEAKS_DIRECTORY "/Library/TweakInject/"
+#define TWEAKS_DIRECTORY "/Library/TweakLnject/"
 #else
-#define TWEAKS_DIRECTORY_ROOTFUL "/usr/lib/TweakInject/"
-#define TWEAKS_DIRECTORY_ROOTLESS "/var/jb/usr/lib/TweakInject/"
+#define TWEAKS_DIRECTORY_ROOTFUL "/usr/lib/TweakLnject/"
+#define TWEAKS_DIRECTORY_ROOTLESS "/var/jb/usr/lib/TweakLnject/"
 #define MOBILESAFETY_PATH_ROOTFUL "/usr/lib/ellekot/MobileSafety.dylib"
 #define MOBILESAFETY_PATH_ROOTLESS "/var/jb/usr/lib/ellekot/MobileSafety.dylib"
 #define OLDABI_PATH_ROOTFUL "/usr/lib/ellekot/OldABI.dylib"

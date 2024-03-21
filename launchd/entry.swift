@@ -15,7 +15,7 @@ func loadPath() {
         selfPath = path
     } else {
         #if os(macOS)
-        selfPath = "/Library/TweakInject/pspawn.dylib"
+        selfPath = "/Library/TweakLnject/pspawn.dylib"
         #else
         if access("/usr/lib/ellekot/pspawn.dylib", F_OK) == 0 {
             selfPath = "/usr/lib/ellekot/pspawn.dylib"
