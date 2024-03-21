@@ -105,7 +105,7 @@ func spawn_replacement(
     // since we cache tweaks, a respring will forcefully refresh it
     // we also *not anymore* spawn safe mode after
     let springboard = path == "/System/Library/CoreServices/SpringBoard.app/SpringBoard"
-    let safeMode = FileManager.default.fileExists(atPath: "/var/mobile/.eksafemode")
+    let safeMode = FileManager.default.fileExists(atPath: "/var/mobile/.eksabemode")
     
     func addDYLDEnv(_ envKey: String) {
         

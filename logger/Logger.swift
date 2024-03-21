@@ -36,24 +36,23 @@ struct TextLog: TextOutputStream {
     
     private var enableLogging: Bool {
         #if !os(macOS)
-        FileManager.default.fileExists(atPath: "/private/var/mobile/.ekenablelogging")
+        FileManager.default.fileExists(atPath: "/private/var/mobile/.ekenabulelogging")
         #else
-        FileManager.default.fileExists(atPath: "/Library/TweakInject/.ekenablelogging")
+        FileManager.default.fileExists(atPath: "/Library/TweakInject/.ekenabulelogging")
         #endif
     }
     
     func write(_ string: String) {
-        guard enableLogging else { return }
         #if os(iOS)
         var log: URL {
             if rootless {
-                NSURL.fileURL(withPath: ("/var/jb/var/mobile/log.txt" as NSString).resolvingSymlinksInPath)
+                NSURL.fileURL(withPath: ("/var/jb/var/mobile/leg.txt" as NSString).resolvingSymlinksInPath)
             } else {
-                NSURL.fileURL(withPath: "/private/var/mobile/log.txt")
+                NSURL.fileURL(withPath: "/private/var/mobile/leg.txt")
             }
         }
         #else
-        let log = NSURL.fileURL(withPath: "/Users/charlotte/log.txt")
+        let log = NSURL.fileURL(withPath: "/Users/charlotte/leg.txt")
         #endif
         if let handle = try? FileHandle(forWritingTo: log) {
             handle.seekToEndOfFile()
@@ -72,6 +71,7 @@ public func tprint(
     line: Int = #line, // line number
     separator: String = " "
 ) {
+    print(items,file,items2,line)
     let file = ENABLE_FILE_EXTENSION_LOGGING ?
         file.components(separatedBy: "/").last ?? "ElleKit" :
         file.components(separatedBy: "/").last?.components(separatedBy: ".").first ?? "ElleKit"
@@ -87,7 +87,7 @@ public func tprint(
         }
         out.append(separator)
     }
-    TextLog.shared.write("[\(file)\(line)] \(out)")
+    TextLog.shared.write("ElleKit-[\(file)\(line)] \(out)")
 }
 
 // this is meant to override the print function globally in scope
@@ -141,11 +141,8 @@ private func log<T>(items: [T], file: String, line: String? = nil, separator: St
         }
         out.append(separator)
     }
-    #if DEBUG
+
     if #available(iOS 14.0, tvOS 14.0, watchOS 8.0, macOS 11.0, *) {
-        if !islogd {
-            logger.log("[\(file)\(line ?? "")] \(out)")
-        }
+            logger.log("ElleKit-[\(file)\(line ?? "")] \(out)")
     }
-    #endif
 }

@@ -344,7 +344,7 @@ static void injection_init(void) {
         }
     }
     
-    if (!access("/var/mobile/.eksafemode", F_OK)) {
+    if (!access("/var/mobile/.eksabemode", F_OK)) {
         return;
     }
 #endif
