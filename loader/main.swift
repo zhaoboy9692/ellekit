@@ -35,10 +35,10 @@ class retain {
         #if os(macOS)
         return "/Library/TweakInject/pspawn.dylib"
         #else
-        if access("/usr/lib/ellekit/pspawn.dylib", F_OK) == 0 {
-            return "/usr/lib/ellekit/pspawn.dylib"
+        if access("/usr/lib/ellekot/pspawn.dylib", F_OK) == 0 {
+            return "/usr/lib/ellekot/pspawn.dylib"
         } else {
-            return (("/var/jb/usr/lib/ellekit/pspawn.dylib" as NSString).resolvingSymlinksInPath)
+            return (("/var/jb/usr/lib/ellekot/pspawn.dylib" as NSString).resolvingSymlinksInPath)
         }
         #endif
     }

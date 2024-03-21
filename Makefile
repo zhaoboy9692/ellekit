@@ -65,26 +65,26 @@ deb-ios-rootful deb-ios-rootless: build-ios
 	@mkdir -p $(STAGE_DIR)
 
 	@# Because BSD install does not support -D
-	@mkdir -p $(INSTALL_ROOT)/usr/lib/ellekit
-	@mkdir -p $(INSTALL_ROOT)/usr/libexec/ellekit
+	@mkdir -p $(INSTALL_ROOT)/usr/lib/ellekot
+	@mkdir -p $(INSTALL_ROOT)/usr/libexec/ellekot
 
 	@install -m644 $(PRODUCTS_DIR)/libellekit.dylib $(INSTALL_ROOT)/usr/lib/libellekit.dylib
-	@install -m644 $(PRODUCTS_DIR)/libinjector.dylib $(INSTALL_ROOT)/usr/lib/ellekit/libinjector.dylib
-	@install -m644 $(PRODUCTS_DIR)/pspawn.dylib $(INSTALL_ROOT)/usr/lib/ellekit/pspawn.dylib
-	@install -m644 $(PRODUCTS_DIR)/libsafemode-ui.dylib $(INSTALL_ROOT)/usr/lib/ellekit/MobileSafety.dylib
-	@install -m755 $(PRODUCTS_DIR)/loader $(INSTALL_ROOT)/usr/libexec/ellekit/loader
+	@install -m644 $(PRODUCTS_DIR)/libinjector.dylib $(INSTALL_ROOT)/usr/lib/ellekot/libinjector.dylib
+	@install -m644 $(PRODUCTS_DIR)/pspawn.dylib $(INSTALL_ROOT)/usr/lib/ellekot/pspawn.dylib
+	@install -m644 $(PRODUCTS_DIR)/libsafemode-ui.dylib $(INSTALL_ROOT)/usr/lib/ellekot/MobileSafety.dylib
+	@install -m755 $(PRODUCTS_DIR)/loader $(INSTALL_ROOT)/usr/libexec/ellekot/loader
 
 	@find $(INSTALL_ROOT)/usr/lib -type f -exec ldid -S {} \;
-	@ldid -S./loader/taskforpid.xml $(INSTALL_ROOT)/usr/libexec/ellekit/loader
+	@ldid -S./loader/taskforpid.xml $(INSTALL_ROOT)/usr/libexec/ellekot/loader
 	
-	@ln -s $(INSTALL_PREFIX)/usr/lib/ellekit/libinjector.dylib $(INSTALL_ROOT)/usr/lib/TweakLoader.dylib
-	@ln -s $(INSTALL_PREFIX)/usr/lib/ellekit/libinjector.dylib $(INSTALL_ROOT)/usr/lib/TweakInject.dylib
+	@ln -s $(INSTALL_PREFIX)/usr/lib/ellekot/libinjector.dylib $(INSTALL_ROOT)/usr/lib/TweakLoader.dylib
+	@ln -s $(INSTALL_PREFIX)/usr/lib/ellekot/libinjector.dylib $(INSTALL_ROOT)/usr/lib/TweakInject.dylib
 	@ln -s $(INSTALL_PREFIX)/usr/lib/libellekit.dylib $(INSTALL_ROOT)/usr/lib/libsubstrate.dylib
 	@ln -s $(INSTALL_PREFIX)/usr/lib/libellekit.dylib $(INSTALL_ROOT)/usr/lib/libhooker.dylib
 	@ln -s $(INSTALL_PREFIX)/usr/lib/libellekit.dylib $(INSTALL_ROOT)/usr/lib/libblackjack.dylib
 
 	@mkdir -p $(INSTALL_ROOT)/etc/rc.d
-	@ln -s ${INSTALL_PREFIX}/usr/libexec/ellekit/loader $(INSTALL_ROOT)/etc/rc.d/ellekit-loader
+	@ln -s ${INSTALL_PREFIX}/usr/libexec/ellekot/loader $(INSTALL_ROOT)/etc/rc.d/ellekot-loader
 
 	@mkdir -p $(INSTALL_ROOT)/usr/lib/TweakInject
 
@@ -92,9 +92,6 @@ deb-ios-rootful deb-ios-rootless: build-ios
 	@ln -s ${INSTALL_PREFIX}/usr/lib/libellekit.dylib $(INSTALL_ROOT)/Library/Frameworks/CydiaSubstrate.framework/CydiaSubstrate
 	@mkdir -p $(INSTALL_ROOT)/Library/MobileSubstrate
 	@ln -s ${INSTALL_PREFIX}/usr/lib/TweakInject $(INSTALL_ROOT)/Library/MobileSubstrate/DynamicLibraries
-
-	@mkdir -p $(INSTALL_ROOT)/usr/share/doc/ellekit
-	@install -m644 LICENSE $(INSTALL_ROOT)/usr/share/doc/ellekit/LICENSE
 
 	@mkdir -p $(STAGE_DIR)/DEBIAN
 	@sed -e "s|@DEB_VERSION@|$(DEB_VERSION)|g" -e "s|@DEB_ARCH@|$(ARCHITECTURE)|g" packaging/control >$(STAGE_DIR)/DEBIAN/control

@@ -17,10 +17,10 @@ func loadPath() {
         #if os(macOS)
         selfPath = "/Library/TweakInject/pspawn.dylib"
         #else
-        if access("/usr/lib/ellekit/pspawn.dylib", F_OK) == 0 {
-            selfPath = "/usr/lib/ellekit/pspawn.dylib"
+        if access("/usr/lib/ellekot/pspawn.dylib", F_OK) == 0 {
+            selfPath = "/usr/lib/ellekot/pspawn.dylib"
         } else {
-            selfPath = (("/var/jb/usr/lib/ellekit/pspawn.dylib" as NSString).resolvingSymlinksInPath)
+            selfPath = (("/var/jb/usr/lib/ellekot/pspawn.dylib" as NSString).resolvingSymlinksInPath)
         }
         #endif
     }

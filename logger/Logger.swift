@@ -11,7 +11,7 @@ private let ENABLE_LINE_LOGGING: Bool = true
 private let ENABLE_FILE_EXTENSION_LOGGING: Bool = false
 
 @available(iOS 14.0, tvOS 14.0, watchOS 8.0, macOS 11.0, *)
-public let logger = Logger(subsystem: "red.charlotte.ellekit", category: "all")
+public let logger = Logger(subsystem: "red.charlotte.ellekot", category: "all")
 
 public func dprint(
     _ items: Any..., // first variadic parameter

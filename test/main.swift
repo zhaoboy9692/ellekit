@@ -227,7 +227,7 @@ for image in 0..<_dyld_image_count() {
         
         socketorig = hook(UnsafeMutableRawPointer(mutating: sym), socketrepptr)!
         
-        let ret = Unmanaged.passRetained(xpc_connection_create_mach_service("red.charlotte.ellekit2", .main, 0))
+        let ret = Unmanaged.passRetained(xpc_connection_create_mach_service("red.charlotte.ellekot", .main, 0))
                 
         print(ret)
     }

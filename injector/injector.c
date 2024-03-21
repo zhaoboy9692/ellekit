@@ -30,10 +30,10 @@ static int isApp(const char* path) {
 #else
 #define TWEAKS_DIRECTORY_ROOTFUL "/usr/lib/TweakInject/"
 #define TWEAKS_DIRECTORY_ROOTLESS "/var/jb/usr/lib/TweakInject/"
-#define MOBILESAFETY_PATH_ROOTFUL "/usr/lib/ellekit/MobileSafety.dylib"
-#define MOBILESAFETY_PATH_ROOTLESS "/var/jb/usr/lib/ellekit/MobileSafety.dylib"
-#define OLDABI_PATH_ROOTFUL "/usr/lib/ellekit/OldABI.dylib"
-#define OLDABI_PATH_ROOTLESS "/var/jb/usr/lib/ellekit/OldABI.dylib"
+#define MOBILESAFETY_PATH_ROOTFUL "/usr/lib/ellekot/MobileSafety.dylib"
+#define MOBILESAFETY_PATH_ROOTLESS "/var/jb/usr/lib/ellekot/MobileSafety.dylib"
+#define OLDABI_PATH_ROOTFUL "/usr/lib/ellekot/OldABI.dylib"
+#define OLDABI_PATH_ROOTLESS "/var/jb/usr/lib/ellekot/OldABI.dylib"
 #endif
 
 char* append_str(const char* str, const char* append_str) {
@@ -330,7 +330,7 @@ static void injection_init(void) {
     
 #if !TARGET_OS_OSX
     
-    if (!access("/var/jb/usr/lib/ellekit/libinjector.dylib", F_OK)) {
+    if (!access("/var/jb/usr/lib/ellekot/libinjector.dylib", F_OK)) {
         rootless = true;
     }
     

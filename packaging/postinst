@@ -15,7 +15,7 @@ function finish() {
 }
 
 function run_loader() {
-    @INSTALL_PREFIX@/usr/libexec/ellekit/loader
+    @INSTALL_PREFIX@/usr/libexec/ellekot/loader
 }
 
 # Remove log if it exists
