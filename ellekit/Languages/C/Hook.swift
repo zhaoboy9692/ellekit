@@ -51,11 +51,13 @@ public func hook(_ stockTarget: UnsafeMutableRawPointer, _ stockReplacement: Uns
 //    }
     
     print("finding size", target)
-    
+    NSLog("finding size")
+
     let targetSize = findFunctionSize(target) ?? 6
     let safeReg = findSafeRegister(target)
 
     print("[*] ellekit: Size of target:", targetSize as Any)
+    NSLog("[*] ellekit: Size of target:")
 
     let branchOffset = (Int(UInt(bitPattern: replacement)) - Int(UInt(bitPattern: target))) / 4
 
@@ -68,6 +70,7 @@ public func hook(_ stockTarget: UnsafeMutableRawPointer, _ stockReplacement: Uns
     
     if targetSize >= 3 && abs(branchOffset / 1024 / 1024 / 1024) < 4 && branchOffset > 0 {
          print("[*] adrp branch")
+         NSLog("[*] adrp branch")
 
         let target_addr = UInt64(UInt(bitPattern: target))
         let replacement_addr = UInt64(UInt(bitPattern: replacement))
@@ -81,8 +84,10 @@ public func hook(_ stockTarget: UnsafeMutableRawPointer, _ stockReplacement: Uns
         patchSize = 3
         
      } else if targetSize >= 4 && abs(branchOffset / 1024 / 1024) > 128 {
+         NSLog("[*] Big branch")
          print("[*] Big branch")
-         
+
+
         let target_addr = UInt64(UInt(bitPattern: replacement))
         
         code = [0x50, 0x00, 0x00, 0x58] + // ldr x16, #8
@@ -99,14 +104,16 @@ public func hook(_ stockTarget: UnsafeMutableRawPointer, _ stockReplacement: Uns
         base: target,
         target: replacement
      ) {
+         NSLog("[+] ellekit: using trampoline method")
          print("[+] ellekit: using trampoline method")
-         
+
          return tramp.orig
      } else if abs(branchOffset / 1024 / 1024) > 128 { // tiny function beyond 4gb hook... using exception handler
          if exceptionHandler == nil {
               exceptionHandler = .init()
          }
          print("[*] ellekit: using exception handler method")
+         NSLog("[*] ellekit: using exception handler method")
          code = [0x20, 0x00, 0x20, 0xD4] // brk #1
          
          patchSize = 1
@@ -138,6 +145,7 @@ public func hook(_ stockTarget: UnsafeMutableRawPointer, _ stockReplacement: Uns
         #else
         if result != 0 {
             print("ellekit: Hook failure for \(String(describing: target)) to \(String(describing: target))")
+            NSLog("ellekit: Hook failure for ")
         }
         #endif
         return result
@@ -169,6 +177,7 @@ public func hook(_ originalTarget: UnsafeMutableRawPointer, _ originalReplacemen
 
     let targetSize = findFunctionSize(target) ?? 6
     print("[*] ellekit: Size of target:", targetSize as Any)
+    NSLog("[*] ellekit: Size of target:")
 
     let branchOffset = (Int(UInt(bitPattern: replacement)) - Int(UInt(bitPattern: target))) / 4
 
@@ -176,6 +185,7 @@ public func hook(_ originalTarget: UnsafeMutableRawPointer, _ originalReplacemen
 
     if targetSize > 4 && abs(branchOffset / 1024 / 1024) > 128 {
         print("[*] Big branch")
+        NSLog("[*] Big branch")
 
         let target_addr = UInt64(UInt(bitPattern: replacement))
 
@@ -190,16 +200,19 @@ public func hook(_ originalTarget: UnsafeMutableRawPointer, _ originalReplacemen
            target: replacement
         ) != nil {
             print("[+] ellekit: using trampoline method")
-            
+            NSLog("[+] ellekit: using trampoline method")
+
             return;
         }
         if exceptionHandler == nil {
             exceptionHandler = .init()
         }
         print("[*] ellekit: using exception handler method")
+        NSLog("[*] ellekit: using exception handler method")
         code = [0x20, 0x00, 0x20, 0xD4] // process crash! (brk #1)
     } else {
         print("[*] ellekit: Small branch")
+        NSLog("[*] ellekit: Small branch")
         @InstructionBuilder
         var codeBuilder: [UInt8] {
             b(branchOffset)
@@ -218,6 +231,7 @@ public func hook(_ originalTarget: UnsafeMutableRawPointer, _ originalReplacemen
         #else
         if result != 0 {
             print("ellekit: Hook failure for \(String(describing: target)) to \(String(describing: target))")
+            NSLog("ellekit: Hook failure for")
         }
         #endif
     }

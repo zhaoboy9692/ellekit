@@ -19,11 +19,13 @@ public func messageHook(_ cls: AnyClass, _ sel: Selector, _ imp: IMP, _ result: 
         if let old,
            let fp = unsafeBitCast(old, to: UnsafeMutableRawPointer?.self) {
             print("[+] ellekit: Successfully got orig pointer for an objc message hook")
+            NSLog("[+] ellekit: Successfully got orig pointer for an objc message hook")
             result.pointee = fp.makeCallable()
         } else if let superclass = class_getSuperclass(cls),
                   let ptr = class_getMethodImplementation(superclass, sel),
                   let fp = unsafeBitCast(ptr, to: UnsafeMutableRawPointer?.self) {
             print("[+] ellekit: Successfully got orig pointer from superclass for an objc message hook")
+            NSLog("[+] ellekit: Successfully got orig pointer from superclass for an objc message hook")
             result.pointee = fp.makeCallable()
         }
     }
@@ -48,11 +50,13 @@ public func hookClassPair(_ targetClass: AnyClass, _ hookClass: AnyClass, _ base
         return
     }
     print("[*] ellekit: \(method_count) methods found in hooked class")
+    NSLog("[*] ellekit: methods found in hooked class")
     for iter in 0..<Int(method_count) {
         let selector = method_getName(methods[iter])
         print("[*] ellekit: hooked method is", sel_getName(selector))
-        
-        let method_encoding = method_getTypeEncoding(methods[iter])
+        NSLog("[*] ellekit: hooked method is")
+
+        let method_encoding: UnsafePointer<CChar>? = method_getTypeEncoding(methods[iter])
         
         // If this is true we need to override the method
         // Otherwise we can just add the method to the subclass

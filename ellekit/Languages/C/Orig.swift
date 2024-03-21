@@ -26,6 +26,7 @@ func getOriginal(
     if size == 1 {
 
         print("[*] ellekit: Small function")
+        NSLog("[*] ellekit: Small function")
 
         let codesize = MemoryLayout<[UInt8]>.size
 
@@ -40,6 +41,7 @@ func getOriginal(
         let isn = UInt64(combine(unpatched))
         if checkBranch(unpatched) {
             print("[*] ellekit: Redirecting branch")
+            NSLog("[*] ellekit: Redirecting branch")
             code = redirectBranch(target, isn, ptr)
         } else {
             unpatched = Array([unpatched].rebind(formerPC: UInt64(UInt(bitPattern: target)), newPC: UInt64(UInt(bitPattern: ptr))).joined())
@@ -54,10 +56,12 @@ func getOriginal(
         let krt = mach_vm_protect(mach_task_self_, mach_vm_address_t(UInt(bitPattern: ptr)), UInt64(vm_page_size), 0, VM_PROT_READ | VM_PROT_EXECUTE)
         guard krt == KERN_SUCCESS else {
             print("[-] couldn't vm_protect small function orig page:", mach_error_string(krt) ?? "")
+            NSLog("[-] couldn't vm_protect small function orig page:")
             return (nil, 0)
         }
         #if DEBUG
         print("[+] ellekit: Orig written to:", ptr)
+        NSLog("[+] ellekit: Orig written to:")
         #endif
 
         return (ptr, codesize * code.count)
@@ -99,5 +103,6 @@ func getOriginal(
     mach_vm_protect(mach_task_self_, mach_vm_address_t(UInt(bitPattern: ptr)), UInt64(vm_page_size), 0, VM_PROT_READ | VM_PROT_EXECUTE)
     sys_icache_invalidate(ptr, Int(vm_page_size))
     print("[+] ellekit: Orig written to:", ptr)
+    NSLog("[+] ellekit: Orig written to:")
     return (ptr, codesize)
 }
