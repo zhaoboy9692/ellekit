@@ -1,0 +1,185 @@
+Subject: [PATCH] 1.日志输出默认
+2.修改.eksafemode->.eksabemode
+---
+Index: packaging/postinst
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packaging/postinst b/packaging/postinst
+--- a/packaging/postinst	(revision 37d34cabc2d11931b24ab19d00fbd1c725e2589d)
++++ b/packaging/postinst	(date 1710988264164)
+@@ -19,10 +19,10 @@
+ }
+ 
+ # Remove log if it exists
+-rm -f @INSTALL_PREFIX@/var/mobile/log.txt
++rm -f @INSTALL_PREFIX@/var/mobile/leg.txt
+ # Older builds of ElleKit previously always put the log file here
+-if [[ -f /var/mobile/log.txt ]]; then
+-    rm /var/mobile/log.txt
++if [[ -f /var/mobile/leg.txt ]]; then
++    rm /var/mobile/leg.txt
+ fi
+ 
+ if [[ -f /dev/rmd0 ]]; then
+Index: launchd/Implementations.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/launchd/Implementations.swift b/launchd/Implementations.swift
+--- a/launchd/Implementations.swift	(revision 37d34cabc2d11931b24ab19d00fbd1c725e2589d)
++++ b/launchd/Implementations.swift	(date 1710989250183)
+@@ -105,7 +105,7 @@
+     // since we cache tweaks, a respring will forcefully refresh it
+     // we also *not anymore* spawn safe mode after
+     let springboard = path == "/System/Library/CoreServices/SpringBoard.app/SpringBoard"
+-    let safeMode = FileManager.default.fileExists(atPath: "/var/mobile/.eksafemode")
++    let safeMode = FileManager.default.fileExists(atPath: "/var/mobile/.eksabemode")
+     
+     func addDYLDEnv(_ envKey: String) {
+         
+Index: logger/Logger.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/logger/Logger.swift b/logger/Logger.swift
+--- a/logger/Logger.swift	(revision 37d34cabc2d11931b24ab19d00fbd1c725e2589d)
++++ b/logger/Logger.swift	(date 1710988822580)
+@@ -36,24 +36,23 @@
+     
+     private var enableLogging: Bool {
+         #if !os(macOS)
+-        FileManager.default.fileExists(atPath: "/private/var/mobile/.ekenablelogging")
++        FileManager.default.fileExists(atPath: "/private/var/mobile/.ekenabulelogging")
+         #else
+-        FileManager.default.fileExists(atPath: "/Library/TweakInject/.ekenablelogging")
++        FileManager.default.fileExists(atPath: "/Library/TweakInject/.ekenabulelogging")
+         #endif
+     }
+     
+     func write(_ string: String) {
+-        guard enableLogging else { return }
+         #if os(iOS)
+         var log: URL {
+             if rootless {
+-                NSURL.fileURL(withPath: ("/var/jb/var/mobile/log.txt" as NSString).resolvingSymlinksInPath)
++                NSURL.fileURL(withPath: ("/var/jb/var/mobile/leg.txt" as NSString).resolvingSymlinksInPath)
+             } else {
+-                NSURL.fileURL(withPath: "/private/var/mobile/log.txt")
++                NSURL.fileURL(withPath: "/private/var/mobile/leg.txt")
+             }
+         }
+         #else
+-        let log = NSURL.fileURL(withPath: "/Users/charlotte/log.txt")
++        let log = NSURL.fileURL(withPath: "/Users/charlotte/leg.txt")
+         #endif
+         if let handle = try? FileHandle(forWritingTo: log) {
+             handle.seekToEndOfFile()
+@@ -72,6 +71,7 @@
+     line: Int = #line, // line number
+     separator: String = " "
+ ) {
++    print(items,file,items2,line)
+     let file = ENABLE_FILE_EXTENSION_LOGGING ?
+         file.components(separatedBy: "/").last ?? "ElleKit" :
+         file.components(separatedBy: "/").last?.components(separatedBy: ".").first ?? "ElleKit"
+@@ -87,7 +87,7 @@
+         }
+         out.append(separator)
+     }
+-    TextLog.shared.write("[\(file)\(line)] \(out)")
++    TextLog.shared.write("ElleKit-[\(file)\(line)] \(out)")
+ }
+ 
+ // this is meant to override the print function globally in scope
+@@ -141,11 +141,8 @@
+         }
+         out.append(separator)
+     }
+-    #if DEBUG
++
+     if #available(iOS 14.0, tvOS 14.0, watchOS 8.0, macOS 11.0, *) {
+-        if !islogd {
+-            logger.log("[\(file)\(line ?? "")] \(out)")
+-        }
++            logger.log("ElleKit-[\(file)\(line ?? "")] \(out)")
+     }
+-    #endif
+ }
+Index: injector/injector.c
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/injector/injector.c b/injector/injector.c
+--- a/injector/injector.c	(revision 37d34cabc2d11931b24ab19d00fbd1c725e2589d)
++++ b/injector/injector.c	(date 1710988009266)
+@@ -344,7 +344,7 @@
+         }
+     }
+     
+-    if (!access("/var/mobile/.eksafemode", F_OK)) {
++    if (!access("/var/mobile/.eksabemode", F_OK)) {
+         return;
+     }
+ #endif
+Index: sb/tweak.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/sb/tweak.swift b/sb/tweak.swift
+--- a/sb/tweak.swift	(revision 37d34cabc2d11931b24ab19d00fbd1c725e2589d)
++++ b/sb/tweak.swift	(date 1710988009261)
+@@ -58,7 +58,7 @@
+         
+         let exitAction = UIAlertAction(title: "Exit Safe Mode", style: .default, handler: { action in
+             alert = nil
+-            try? FileManager.default.removeItem(atPath: "/var/mobile/.eksafemode")
++            try? FileManager.default.removeItem(atPath: "/var/mobile/.eksabemode")
+             exit(0)
+         })
+ 
+@@ -163,7 +163,7 @@
+ }
+ 
+ func handleSBCrash(currentSig: Int32) {
+-    FileManager.default.createFile(atPath: "/var/mobile/.eksafemode", contents: Data())
++    FileManager.default.createFile(atPath: "/var/mobile/.eksabemode", contents: Data())
+     allSignals.forEach {
+         signal($0, SIG_DFL)
+     }
+@@ -187,11 +187,11 @@
+         
+     NSLog("Hello world, SpringBoard!")
+                 
+-    if FileManager.default.fileExists(atPath: "/var/mobile/.eksafemode") {
++    if FileManager.default.fileExists(atPath: "/var/mobile/.eksabemode") {
+         performHooks()
+     } else if checkVolumeUp() {
+         tprint("Volume up!!!")
+-        FileManager.default.createFile(atPath: "/var/mobile/.eksafemode", contents: Data())
++        FileManager.default.createFile(atPath: "/var/mobile/.eksabemode", contents: Data())
+         exit(0)
+     }
+         
+Index: launchd/safe mode/handler.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/launchd/safe mode/handler.swift b/launchd/safe mode/handler.swift
+--- a/launchd/safe mode/handler.swift	(revision 37d34cabc2d11931b24ab19d00fbd1c725e2589d)
++++ b/launchd/safe mode/handler.swift	(date 1710988009264)
+@@ -97,7 +97,7 @@
+         mach_port_deallocate(mach_task_self_, self.port)
+         mach_port_destroy(mach_task_self_, self.port)
+         
+-        FileManager.default.createFile(atPath: "/private/var/mobile/.eksafemode", contents: Data())
++        FileManager.default.createFile(atPath: "/private/var/mobile/.eksabemode", contents: Data())
+         
+         kill(pid, 9)
+     }

@@ -1,0 +1,244 @@
+Subject: [PATCH] 1.增加nslog
+---
+Index: ellekit/Languages/Objective-C.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ellekit/Languages/Objective-C.swift b/ellekit/Languages/Objective-C.swift
+--- a/ellekit/Languages/Objective-C.swift	(revision 085ad988f03d9f4ff57cd55668c73705d76cf69f)
++++ b/ellekit/Languages/Objective-C.swift	(date 1711005092800)
+@@ -19,11 +19,13 @@
+         if let old,
+            let fp = unsafeBitCast(old, to: UnsafeMutableRawPointer?.self) {
+             print("[+] ellekit: Successfully got orig pointer for an objc message hook")
++            NSLog("[+] ellekit: Successfully got orig pointer for an objc message hook")
+             result.pointee = fp.makeCallable()
+         } else if let superclass = class_getSuperclass(cls),
+                   let ptr = class_getMethodImplementation(superclass, sel),
+                   let fp = unsafeBitCast(ptr, to: UnsafeMutableRawPointer?.self) {
+             print("[+] ellekit: Successfully got orig pointer from superclass for an objc message hook")
++            NSLog("[+] ellekit: Successfully got orig pointer from superclass for an objc message hook")
+             result.pointee = fp.makeCallable()
+         }
+     }
+@@ -48,11 +50,13 @@
+         return
+     }
+     print("[*] ellekit: \(method_count) methods found in hooked class")
++    NSLog("[*] ellekit: methods found in hooked class")
+     for iter in 0..<Int(method_count) {
+         let selector = method_getName(methods[iter])
+         print("[*] ellekit: hooked method is", sel_getName(selector))
+-        
+-        let method_encoding = method_getTypeEncoding(methods[iter])
++        NSLog("[*] ellekit: hooked method is")
++
++        let method_encoding: UnsafePointer<CChar>? = method_getTypeEncoding(methods[iter])
+         
+         // If this is true we need to override the method
+         // Otherwise we can just add the method to the subclass
+Index: loader/main.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/loader/main.swift b/loader/main.swift
+--- a/loader/main.swift	(revision 085ad988f03d9f4ff57cd55668c73705d76cf69f)
++++ b/loader/main.swift	(date 1711004850851)
+@@ -33,7 +33,7 @@
+     
+     static func getPath() -> String {
+         #if os(macOS)
+-        return "/Library/TweakLnject/pspawn.dylib"
++        return "/Library/TweakInject/pspawn.dylib"
+         #else
+         if access("/usr/lib/ellekot/pspawn.dylib", F_OK) == 0 {
+             return "/usr/lib/ellekot/pspawn.dylib"
+Index: ellekit/API/Libhooker.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ellekit/API/Libhooker.swift b/ellekit/API/Libhooker.swift
+--- a/ellekit/API/Libhooker.swift	(revision 085ad988f03d9f4ff57cd55668c73705d76cf69f)
++++ b/ellekit/API/Libhooker.swift	(date 1711004930424)
+@@ -57,17 +57,20 @@
+     let krt1 = mach_vm_allocate(mach_task_self_, &addr, UInt64(vm_page_size), VM_FLAGS_ANYWHERE)
+     guard krt1 == KERN_SUCCESS else {
+         print("[-] couldn't allocate base memory:", mach_error_string(krt1) ?? "")
++        NSLog("[-] couldn't allocate base memory:")
+         return 0
+     }
+     let krt2 = mach_vm_protect(mach_task_self_, addr, UInt64(vm_page_size), 0, VM_PROT_READ | VM_PROT_WRITE)
+     guard krt2 == KERN_SUCCESS else {
+         print("[-] couldn't set memory to rw*:", mach_error_string(krt1) ?? "")
++        NSLog("[-] couldn't set memory to rw*:")
+         return 0
+     }
+     memcpy(UnsafeMutableRawPointer(bitPattern: UInt(addr)), data, size)
+     let krt3 = mach_vm_protect(mach_task_self_, addr, UInt64(vm_page_size), 0, VM_PROT_READ | VM_PROT_EXECUTE)
+     guard krt3 == KERN_SUCCESS else {
+         print("[-] couldn't set memory to r*x:", mach_error_string(krt1) ?? "")
++        NSLog("[-] couldn't set memory to r*x:")
+         return 0
+     }
+     page.pointee = UnsafeMutableRawPointer(bitPattern: UInt(addr))
+Index: ellekit/Languages/C/Orig.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ellekit/Languages/C/Orig.swift b/ellekit/Languages/C/Orig.swift
+--- a/ellekit/Languages/C/Orig.swift	(revision 085ad988f03d9f4ff57cd55668c73705d76cf69f)
++++ b/ellekit/Languages/C/Orig.swift	(date 1711004899200)
+@@ -26,6 +26,7 @@
+     if size == 1 {
+ 
+         print("[*] ellekit: Small function")
++        NSLog("[*] ellekit: Small function")
+ 
+         let codesize = MemoryLayout<[UInt8]>.size
+ 
+@@ -40,6 +41,7 @@
+         let isn = UInt64(combine(unpatched))
+         if checkBranch(unpatched) {
+             print("[*] ellekit: Redirecting branch")
++            NSLog("[*] ellekit: Redirecting branch")
+             code = redirectBranch(target, isn, ptr)
+         } else {
+             unpatched = Array([unpatched].rebind(formerPC: UInt64(UInt(bitPattern: target)), newPC: UInt64(UInt(bitPattern: ptr))).joined())
+@@ -54,10 +56,12 @@
+         let krt = mach_vm_protect(mach_task_self_, mach_vm_address_t(UInt(bitPattern: ptr)), UInt64(vm_page_size), 0, VM_PROT_READ | VM_PROT_EXECUTE)
+         guard krt == KERN_SUCCESS else {
+             print("[-] couldn't vm_protect small function orig page:", mach_error_string(krt) ?? "")
++            NSLog("[-] couldn't vm_protect small function orig page:")
+             return (nil, 0)
+         }
+         #if DEBUG
+         print("[+] ellekit: Orig written to:", ptr)
++        NSLog("[+] ellekit: Orig written to:")
+         #endif
+ 
+         return (ptr, codesize * code.count)
+@@ -99,5 +103,6 @@
+     mach_vm_protect(mach_task_self_, mach_vm_address_t(UInt(bitPattern: ptr)), UInt64(vm_page_size), 0, VM_PROT_READ | VM_PROT_EXECUTE)
+     sys_icache_invalidate(ptr, Int(vm_page_size))
+     print("[+] ellekit: Orig written to:", ptr)
++    NSLog("[+] ellekit: Orig written to:")
+     return (ptr, codesize)
+ }
+Index: ellekit/Languages/C/Hook.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ellekit/Languages/C/Hook.swift b/ellekit/Languages/C/Hook.swift
+--- a/ellekit/Languages/C/Hook.swift	(revision 085ad988f03d9f4ff57cd55668c73705d76cf69f)
++++ b/ellekit/Languages/C/Hook.swift	(date 1711004810630)
+@@ -51,11 +51,13 @@
+ //    }
+     
+     print("finding size", target)
+-    
++    NSLog("finding size")
++
+     let targetSize = findFunctionSize(target) ?? 6
+     let safeReg = findSafeRegister(target)
+ 
+     print("[*] ellekit: Size of target:", targetSize as Any)
++    NSLog("[*] ellekit: Size of target:")
+ 
+     let branchOffset = (Int(UInt(bitPattern: replacement)) - Int(UInt(bitPattern: target))) / 4
+ 
+@@ -68,6 +70,7 @@
+     
+     if targetSize >= 3 && abs(branchOffset / 1024 / 1024 / 1024) < 4 && branchOffset > 0 {
+          print("[*] adrp branch")
++         NSLog("[*] adrp branch")
+ 
+         let target_addr = UInt64(UInt(bitPattern: target))
+         let replacement_addr = UInt64(UInt(bitPattern: replacement))
+@@ -81,8 +84,10 @@
+         patchSize = 3
+         
+      } else if targetSize >= 4 && abs(branchOffset / 1024 / 1024) > 128 {
++         NSLog("[*] Big branch")
+          print("[*] Big branch")
+-         
++
++
+         let target_addr = UInt64(UInt(bitPattern: replacement))
+         
+         code = [0x50, 0x00, 0x00, 0x58] + // ldr x16, #8
+@@ -99,14 +104,16 @@
+         base: target,
+         target: replacement
+      ) {
++         NSLog("[+] ellekit: using trampoline method")
+          print("[+] ellekit: using trampoline method")
+-         
++
+          return tramp.orig
+      } else if abs(branchOffset / 1024 / 1024) > 128 { // tiny function beyond 4gb hook... using exception handler
+          if exceptionHandler == nil {
+               exceptionHandler = .init()
+          }
+          print("[*] ellekit: using exception handler method")
++         NSLog("[*] ellekit: using exception handler method")
+          code = [0x20, 0x00, 0x20, 0xD4] // brk #1
+          
+          patchSize = 1
+@@ -138,6 +145,7 @@
+         #else
+         if result != 0 {
+             print("ellekit: Hook failure for \(String(describing: target)) to \(String(describing: target))")
++            NSLog("ellekit: Hook failure for ")
+         }
+         #endif
+         return result
+@@ -169,6 +177,7 @@
+ 
+     let targetSize = findFunctionSize(target) ?? 6
+     print("[*] ellekit: Size of target:", targetSize as Any)
++    NSLog("[*] ellekit: Size of target:")
+ 
+     let branchOffset = (Int(UInt(bitPattern: replacement)) - Int(UInt(bitPattern: target))) / 4
+ 
+@@ -176,6 +185,7 @@
+ 
+     if targetSize > 4 && abs(branchOffset / 1024 / 1024) > 128 {
+         print("[*] Big branch")
++        NSLog("[*] Big branch")
+ 
+         let target_addr = UInt64(UInt(bitPattern: replacement))
+ 
+@@ -190,16 +200,19 @@
+            target: replacement
+         ) != nil {
+             print("[+] ellekit: using trampoline method")
+-            
++            NSLog("[+] ellekit: using trampoline method")
++
+             return;
+         }
+         if exceptionHandler == nil {
+             exceptionHandler = .init()
+         }
+         print("[*] ellekit: using exception handler method")
++        NSLog("[*] ellekit: using exception handler method")
+         code = [0x20, 0x00, 0x20, 0xD4] // process crash! (brk #1)
+     } else {
+         print("[*] ellekit: Small branch")
++        NSLog("[*] ellekit: Small branch")
+         @InstructionBuilder
+         var codeBuilder: [UInt8] {
+             b(branchOffset)
+@@ -218,6 +231,7 @@
+         #else
+         if result != 0 {
+             print("ellekit: Hook failure for \(String(describing: target)) to \(String(describing: target))")
++            NSLog("ellekit: Hook failure for")
+         }
+         #endif
+     }

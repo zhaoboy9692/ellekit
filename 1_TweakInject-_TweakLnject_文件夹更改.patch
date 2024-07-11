@@ -1,0 +1,158 @@
+Subject: [PATCH] 1.TweakInject->TweakLnject 文件夹更改
+---
+Index: injector/injector.c
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/injector/injector.c b/injector/injector.c
+--- a/injector/injector.c	(revision f8b83c35e70855987e50f7771fa7c7b7d8dfab34)
++++ b/injector/injector.c	(revision d7d8cc83aee5e39151fd92ceda75c3e8761f614a)
+@@ -26,10 +26,10 @@
+ }
+ 
+ #if TARGET_OS_OSX
+-#define TWEAKS_DIRECTORY "/Library/TweakInject/"
++#define TWEAKS_DIRECTORY "/Library/TweakLnject/"
+ #else
+-#define TWEAKS_DIRECTORY_ROOTFUL "/usr/lib/TweakInject/"
+-#define TWEAKS_DIRECTORY_ROOTLESS "/var/jb/usr/lib/TweakInject/"
++#define TWEAKS_DIRECTORY_ROOTFUL "/usr/lib/TweakLnject/"
++#define TWEAKS_DIRECTORY_ROOTLESS "/var/jb/usr/lib/TweakLnject/"
+ #define MOBILESAFETY_PATH_ROOTFUL "/usr/lib/ellekot/MobileSafety.dylib"
+ #define MOBILESAFETY_PATH_ROOTLESS "/var/jb/usr/lib/ellekot/MobileSafety.dylib"
+ #define OLDABI_PATH_ROOTFUL "/usr/lib/ellekot/OldABI.dylib"
+Index: launchd/Implementations.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/launchd/Implementations.swift b/launchd/Implementations.swift
+--- a/launchd/Implementations.swift	(revision f8b83c35e70855987e50f7771fa7c7b7d8dfab34)
++++ b/launchd/Implementations.swift	(revision d7d8cc83aee5e39151fd92ceda75c3e8761f614a)
+@@ -249,7 +249,7 @@
+     #if os(macOS)
+     let file_extension = sandbox_extension_issue_file(
+         APP_SANDBOX_READ_WRITE,
+-        ("/Library/TweakInject" as NSString).resolvingSymlinksInPath,
++        ("/Library/TweakLnject" as NSString).resolvingSymlinksInPath,
+         0
+     )
+     #else
+Index: launchd/Tweak.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/launchd/Tweak.swift b/launchd/Tweak.swift
+--- a/launchd/Tweak.swift	(revision f8b83c35e70855987e50f7771fa7c7b7d8dfab34)
++++ b/launchd/Tweak.swift	(revision d7d8cc83aee5e39151fd92ceda75c3e8761f614a)
+@@ -38,10 +38,10 @@
+ 
+ func getTweaksPath() -> String {
+     #if os(macOS)
+-    return "/Library/TweakInject/"
++    return "/Library/TweakLnject/"
+     #else
+-    if access("/var/jb/usr/lib/TweakInject/", F_OK) == 0 {
+-        return (("/var/jb/usr/lib/TweakInject/" as NSString).resolvingSymlinksInPath)+"/"
++    if access("/var/jb/usr/lib/TweakLnject/", F_OK) == 0 {
++        return (("/var/jb/usr/lib/TweakLnject/" as NSString).resolvingSymlinksInPath)+"/"
+     } else {
+         return (("/Library/MobileSubstrate/DynamicLibraries/" as NSString).resolvingSymlinksInPath)+"/"
+     }
+Index: launchd/entry.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/launchd/entry.swift b/launchd/entry.swift
+--- a/launchd/entry.swift	(revision f8b83c35e70855987e50f7771fa7c7b7d8dfab34)
++++ b/launchd/entry.swift	(revision d7d8cc83aee5e39151fd92ceda75c3e8761f614a)
+@@ -15,7 +15,7 @@
+         selfPath = path
+     } else {
+         #if os(macOS)
+-        selfPath = "/Library/TweakInject/pspawn.dylib"
++        selfPath = "/Library/TweakLnject/pspawn.dylib"
+         #else
+         if access("/usr/lib/ellekot/pspawn.dylib", F_OK) == 0 {
+             selfPath = "/usr/lib/ellekot/pspawn.dylib"
+Index: loader/main.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/loader/main.swift b/loader/main.swift
+--- a/loader/main.swift	(revision f8b83c35e70855987e50f7771fa7c7b7d8dfab34)
++++ b/loader/main.swift	(revision d7d8cc83aee5e39151fd92ceda75c3e8761f614a)
+@@ -33,7 +33,7 @@
+     
+     static func getPath() -> String {
+         #if os(macOS)
+-        return "/Library/TweakInject/pspawn.dylib"
++        return "/Library/TweakLnject/pspawn.dylib"
+         #else
+         if access("/usr/lib/ellekot/pspawn.dylib", F_OK) == 0 {
+             return "/usr/lib/ellekot/pspawn.dylib"
+Index: logger/Logger.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/logger/Logger.swift b/logger/Logger.swift
+--- a/logger/Logger.swift	(revision f8b83c35e70855987e50f7771fa7c7b7d8dfab34)
++++ b/logger/Logger.swift	(revision d7d8cc83aee5e39151fd92ceda75c3e8761f614a)
+@@ -38,7 +38,7 @@
+         #if !os(macOS)
+         FileManager.default.fileExists(atPath: "/private/var/mobile/.ekenabulelogging")
+         #else
+-        FileManager.default.fileExists(atPath: "/Library/TweakInject/.ekenabulelogging")
++        FileManager.default.fileExists(atPath: "/Library/TweakLnject/.ekenabulelogging")
+         #endif
+     }
+     
+Index: packaging/preinst
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packaging/preinst b/packaging/preinst
+--- a/packaging/preinst	(revision f8b83c35e70855987e50f7771fa7c7b7d8dfab34)
++++ b/packaging/preinst	(revision d7d8cc83aee5e39151fd92ceda75c3e8761f614a)
+@@ -6,7 +6,7 @@
+ }
+ 
+ OLDPATH="@INSTALL_PREFIX@/Library/MobileSubstrate/DynamicLibraries"
+-NEWPATH="@INSTALL_PREFIX@/usr/lib/TweakInject"
++NEWPATH="@INSTALL_PREFIX@/usr/lib/TweakLnject"
+ 
+ if [ "$1" != "install" ]; then
+     exit 0
+@@ -15,14 +15,14 @@
+ if ! [ -d "$NEWPATH" ]; then
+     if [ -e "$NEWPATH" ]; then
+         # WTF?
+-        abort "TweakInject exists and is not a directory"
++        abort "TweakLnject exists and is not a directory"
+     fi
+-    mkdir "$NEWPATH" || abort "Failed to create TweakInject directory"
++    mkdir "$NEWPATH" || abort "Failed to create TweakLnject directory"
+ fi
+ 
+ if ! [ -L "$OLDPATH" ]; then
+     if [ -d "$OLDPATH" ]; then
+-        mv "$OLDPATH"/* "$NEWPATH" || abort "Failed to copy DynamicLibraries to TweakInject"
++        mv "$OLDPATH"/* "$NEWPATH" || abort "Failed to copy DynamicLibraries to TweakLnject"
+         rm -rf "$OLDPATH" || abort "Failed to remove DynamicLibraries"
+     fi
+     if [ -e "$OLDPATH" ]; then
+@@ -30,7 +30,7 @@
+         abort "DynamicLibraries exists and is not a symlink"
+     fi
+     mkdir -p "@INSTALL_PREFIX@/Library/MobileSubstrate" || abort "Failed to create MobileSubstrate directory"
+-    ln -s "$NEWPATH" "$OLDPATH" || abort "Failed to symlink DynamicLibraries to TweakInject"
++    ln -s "$NEWPATH" "$OLDPATH" || abort "Failed to symlink DynamicLibraries to TweakLnject"
+ fi
+ 
+ exit 0

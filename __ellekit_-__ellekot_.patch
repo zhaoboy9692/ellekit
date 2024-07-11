@@ -1,0 +1,184 @@
+Subject: [PATCH] 1./ellekit/->/ellekot/
+---
+Index: test/main.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/test/main.swift b/test/main.swift
+--- a/test/main.swift	(revision e81a45eae08af53d22f7090e61d83ea59ec8573c)
++++ b/test/main.swift	(date 1710994438806)
+@@ -227,7 +227,7 @@
+         
+         socketorig = hook(UnsafeMutableRawPointer(mutating: sym), socketrepptr)!
+         
+-        let ret = Unmanaged.passRetained(xpc_connection_create_mach_service("red.charlotte.ellekit2", .main, 0))
++        let ret = Unmanaged.passRetained(xpc_connection_create_mach_service("red.charlotte.ellekot", .main, 0))
+                 
+         print(ret)
+     }
+Index: packaging/postinst
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packaging/postinst b/packaging/postinst
+--- a/packaging/postinst	(revision e81a45eae08af53d22f7090e61d83ea59ec8573c)
++++ b/packaging/postinst	(date 1710994227682)
+@@ -15,7 +15,7 @@
+ }
+ 
+ function run_loader() {
+-    @INSTALL_PREFIX@/usr/libexec/ellekit/loader
++    @INSTALL_PREFIX@/usr/libexec/ellekot/loader
+ }
+ 
+ # Remove log if it exists
+Index: loader/main.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/loader/main.swift b/loader/main.swift
+--- a/loader/main.swift	(revision e81a45eae08af53d22f7090e61d83ea59ec8573c)
++++ b/loader/main.swift	(date 1710994227687)
+@@ -35,10 +35,10 @@
+         #if os(macOS)
+         return "/Library/TweakInject/pspawn.dylib"
+         #else
+-        if access("/usr/lib/ellekit/pspawn.dylib", F_OK) == 0 {
+-            return "/usr/lib/ellekit/pspawn.dylib"
++        if access("/usr/lib/ellekot/pspawn.dylib", F_OK) == 0 {
++            return "/usr/lib/ellekot/pspawn.dylib"
+         } else {
+-            return (("/var/jb/usr/lib/ellekit/pspawn.dylib" as NSString).resolvingSymlinksInPath)
++            return (("/var/jb/usr/lib/ellekot/pspawn.dylib" as NSString).resolvingSymlinksInPath)
+         }
+         #endif
+     }
+Index: logger/Logger.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/logger/Logger.swift b/logger/Logger.swift
+--- a/logger/Logger.swift	(revision e81a45eae08af53d22f7090e61d83ea59ec8573c)
++++ b/logger/Logger.swift	(date 1710994438804)
+@@ -11,7 +11,7 @@
+ private let ENABLE_FILE_EXTENSION_LOGGING: Bool = false
+ 
+ @available(iOS 14.0, tvOS 14.0, watchOS 8.0, macOS 11.0, *)
+-public let logger = Logger(subsystem: "red.charlotte.ellekit", category: "all")
++public let logger = Logger(subsystem: "red.charlotte.ellekot", category: "all")
+ 
+ public func dprint(
+     _ items: Any..., // first variadic parameter
+Index: Makefile
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Makefile b/Makefile
+--- a/Makefile	(revision e81a45eae08af53d22f7090e61d83ea59ec8573c)
++++ b/Makefile	(date 1710994586438)
+@@ -65,26 +65,26 @@
+ 	@mkdir -p $(STAGE_DIR)
+ 
+ 	@# Because BSD install does not support -D
+-	@mkdir -p $(INSTALL_ROOT)/usr/lib/ellekit
+-	@mkdir -p $(INSTALL_ROOT)/usr/libexec/ellekit
++	@mkdir -p $(INSTALL_ROOT)/usr/lib/ellekot
++	@mkdir -p $(INSTALL_ROOT)/usr/libexec/ellekot
+ 
+ 	@install -m644 $(PRODUCTS_DIR)/libellekit.dylib $(INSTALL_ROOT)/usr/lib/libellekit.dylib
+-	@install -m644 $(PRODUCTS_DIR)/libinjector.dylib $(INSTALL_ROOT)/usr/lib/ellekit/libinjector.dylib
+-	@install -m644 $(PRODUCTS_DIR)/pspawn.dylib $(INSTALL_ROOT)/usr/lib/ellekit/pspawn.dylib
+-	@install -m644 $(PRODUCTS_DIR)/libsafemode-ui.dylib $(INSTALL_ROOT)/usr/lib/ellekit/MobileSafety.dylib
+-	@install -m755 $(PRODUCTS_DIR)/loader $(INSTALL_ROOT)/usr/libexec/ellekit/loader
++	@install -m644 $(PRODUCTS_DIR)/libinjector.dylib $(INSTALL_ROOT)/usr/lib/ellekot/libinjector.dylib
++	@install -m644 $(PRODUCTS_DIR)/pspawn.dylib $(INSTALL_ROOT)/usr/lib/ellekot/pspawn.dylib
++	@install -m644 $(PRODUCTS_DIR)/libsafemode-ui.dylib $(INSTALL_ROOT)/usr/lib/ellekot/MobileSafety.dylib
++	@install -m755 $(PRODUCTS_DIR)/loader $(INSTALL_ROOT)/usr/libexec/ellekot/loader
+ 
+ 	@find $(INSTALL_ROOT)/usr/lib -type f -exec ldid -S {} \;
+-	@ldid -S./loader/taskforpid.xml $(INSTALL_ROOT)/usr/libexec/ellekit/loader
++	@ldid -S./loader/taskforpid.xml $(INSTALL_ROOT)/usr/libexec/ellekot/loader
+ 	
+-	@ln -s $(INSTALL_PREFIX)/usr/lib/ellekit/libinjector.dylib $(INSTALL_ROOT)/usr/lib/TweakLoader.dylib
+-	@ln -s $(INSTALL_PREFIX)/usr/lib/ellekit/libinjector.dylib $(INSTALL_ROOT)/usr/lib/TweakInject.dylib
++	@ln -s $(INSTALL_PREFIX)/usr/lib/ellekot/libinjector.dylib $(INSTALL_ROOT)/usr/lib/TweakLoader.dylib
++	@ln -s $(INSTALL_PREFIX)/usr/lib/ellekot/libinjector.dylib $(INSTALL_ROOT)/usr/lib/TweakInject.dylib
+ 	@ln -s $(INSTALL_PREFIX)/usr/lib/libellekit.dylib $(INSTALL_ROOT)/usr/lib/libsubstrate.dylib
+ 	@ln -s $(INSTALL_PREFIX)/usr/lib/libellekit.dylib $(INSTALL_ROOT)/usr/lib/libhooker.dylib
+ 	@ln -s $(INSTALL_PREFIX)/usr/lib/libellekit.dylib $(INSTALL_ROOT)/usr/lib/libblackjack.dylib
+ 
+ 	@mkdir -p $(INSTALL_ROOT)/etc/rc.d
+-	@ln -s ${INSTALL_PREFIX}/usr/libexec/ellekit/loader $(INSTALL_ROOT)/etc/rc.d/ellekit-loader
++	@ln -s ${INSTALL_PREFIX}/usr/libexec/ellekot/loader $(INSTALL_ROOT)/etc/rc.d/ellekot-loader
+ 
+ 	@mkdir -p $(INSTALL_ROOT)/usr/lib/TweakInject
+ 
+@@ -93,9 +93,6 @@
+ 	@mkdir -p $(INSTALL_ROOT)/Library/MobileSubstrate
+ 	@ln -s ${INSTALL_PREFIX}/usr/lib/TweakInject $(INSTALL_ROOT)/Library/MobileSubstrate/DynamicLibraries
+ 
+-	@mkdir -p $(INSTALL_ROOT)/usr/share/doc/ellekit
+-	@install -m644 LICENSE $(INSTALL_ROOT)/usr/share/doc/ellekit/LICENSE
+-
+ 	@mkdir -p $(STAGE_DIR)/DEBIAN
+ 	@sed -e "s|@DEB_VERSION@|$(DEB_VERSION)|g" -e "s|@DEB_ARCH@|$(ARCHITECTURE)|g" packaging/control >$(STAGE_DIR)/DEBIAN/control
+ 	@sed -e "s|@DEB_VERSION@|$(DEB_VERSION)|g" -e "s|@DEB_ARCH@|$(ARCHITECTURE)|g" -e "s|@INSTALL_PREFIX@|$(INSTALL_PREFIX)|g" packaging/preinst >$(STAGE_DIR)/DEBIAN/preinst
+Index: launchd/entry.swift
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/launchd/entry.swift b/launchd/entry.swift
+--- a/launchd/entry.swift	(revision e81a45eae08af53d22f7090e61d83ea59ec8573c)
++++ b/launchd/entry.swift	(date 1710994227691)
+@@ -17,10 +17,10 @@
+         #if os(macOS)
+         selfPath = "/Library/TweakInject/pspawn.dylib"
+         #else
+-        if access("/usr/lib/ellekit/pspawn.dylib", F_OK) == 0 {
+-            selfPath = "/usr/lib/ellekit/pspawn.dylib"
++        if access("/usr/lib/ellekot/pspawn.dylib", F_OK) == 0 {
++            selfPath = "/usr/lib/ellekot/pspawn.dylib"
+         } else {
+-            selfPath = (("/var/jb/usr/lib/ellekit/pspawn.dylib" as NSString).resolvingSymlinksInPath)
++            selfPath = (("/var/jb/usr/lib/ellekot/pspawn.dylib" as NSString).resolvingSymlinksInPath)
+         }
+         #endif
+     }
+Index: injector/injector.c
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/injector/injector.c b/injector/injector.c
+--- a/injector/injector.c	(revision e81a45eae08af53d22f7090e61d83ea59ec8573c)
++++ b/injector/injector.c	(date 1710994227696)
+@@ -30,10 +30,10 @@
+ #else
+ #define TWEAKS_DIRECTORY_ROOTFUL "/usr/lib/TweakInject/"
+ #define TWEAKS_DIRECTORY_ROOTLESS "/var/jb/usr/lib/TweakInject/"
+-#define MOBILESAFETY_PATH_ROOTFUL "/usr/lib/ellekit/MobileSafety.dylib"
+-#define MOBILESAFETY_PATH_ROOTLESS "/var/jb/usr/lib/ellekit/MobileSafety.dylib"
+-#define OLDABI_PATH_ROOTFUL "/usr/lib/ellekit/OldABI.dylib"
+-#define OLDABI_PATH_ROOTLESS "/var/jb/usr/lib/ellekit/OldABI.dylib"
++#define MOBILESAFETY_PATH_ROOTFUL "/usr/lib/ellekot/MobileSafety.dylib"
++#define MOBILESAFETY_PATH_ROOTLESS "/var/jb/usr/lib/ellekot/MobileSafety.dylib"
++#define OLDABI_PATH_ROOTFUL "/usr/lib/ellekot/OldABI.dylib"
++#define OLDABI_PATH_ROOTLESS "/var/jb/usr/lib/ellekot/OldABI.dylib"
+ #endif
+ 
+ char* append_str(const char* str, const char* append_str) {
+@@ -330,7 +330,7 @@
+     
+ #if !TARGET_OS_OSX
+     
+-    if (!access("/var/jb/usr/lib/ellekit/libinjector.dylib", F_OK)) {
++    if (!access("/var/jb/usr/lib/ellekot/libinjector.dylib", F_OK)) {
+         rootless = true;
+     }
+     
