@@ -60,7 +60,7 @@ func spawn_replacement(
             
     let path = String(cString: path)
     
-    tprint("executing \(path)")
+    tprint("executing 111\(path)")
     
     var envp = envp?.array ?? []
     
@@ -106,13 +106,13 @@ func spawn_replacement(
     // we also *not anymore* spawn safe mode after
     let springboard = path == "/System/Library/CoreServices/SpringBoard.app/SpringBoard"
     let safeMode = FileManager.default.fileExists(atPath: "/var/mobile/.eksabemode")
-    
+//XPC_SERVICE_NAME
     func addDYLDEnv(_ envKey: String) {
-        
+
         guard !envKey.isEmpty else {
             return
         }
-        
+
         if let firstEnvIndex, envKey != envp[firstEnvIndex] {
             let previousEnvKey = envp[firstEnvIndex].dropFirst("DYLD_INSERT_LIBRARIES=".count) // gives us the path
             envp[firstEnvIndex] = "DYLD_INSERT_LIBRARIES="+envKey + ":" + previousEnvKey
@@ -120,12 +120,12 @@ func spawn_replacement(
             envp.append("DYLD_INSERT_LIBRARIES="+envKey)
         }
     }
-    
+    tprint("executing 222222\(path)")
     if springboard {
         tprint("Spawning SpringBoard (time to refresh tweaks)")
         try? loadTweaks()
     }
-    
+
     if launchd {
         // Inject pspawn.dylib in launchd and xpcproxy
         tprint("launchd \(path)")
@@ -135,27 +135,30 @@ func spawn_replacement(
             addDYLDEnv(selfPath)
         }
     }
-    else if safeMode {
-                
+    else if safeMode
+     {
+
         // We always inject the SpringBoard MobileSafety.dylib, I believe it is safe
         // If it isn't SpringBoard, skip ahead
         if springboard {
             tprint("Injecting sb hook \(sbHookPath)")
             addDYLDEnv(sbHookPath)
         }
-        
-    } else if !blacklisted {
-        
+
+    } else if !blacklisted
+    {
+
         #if !os(macOS)
         tprint("injecting tweaks \(path)")
-        
+        tprint("executing 333333\(path)")
+        //通过env给普通应用加载libinjector.dylib,libinjector.dylib用来加载其他dylib
         addDYLDEnv(injectorPath)
-        
+        tprint("executing 44444 \(injectorPath)")
         let POSIX_SPAWNATTR_OFF_MEMLIMIT_ACTIVE = 0x48
         let POSIX_SPAWNATTR_OFF_MEMLIMIT_INACTIVE = 0x4C
-        
+
         #warning("Offset is wrong for 16.x")
-        
+
 //        if let attrStruct = spawnattr?.pointee {
 //            let memlimit_active = attrStruct.advanced(by: Int(POSIX_SPAWNATTR_OFF_MEMLIMIT_ACTIVE)).load(as: Int32.self)
 //            if memlimit_active != -1 {
@@ -167,54 +170,53 @@ func spawn_replacement(
 //            }
 //        }
         #else
-        
-        tprint("removed jetsam")
-        
-        if let bundleID = findBundleID(path: path) {
-            
-            tprint("found bundle \(path) \(bundleID)")
-                              
-            var dylibs = [String]()
-            
-            var injectedBundles = ["com.apple.uikit", "com.apple.foundation", "com.apple.security", "com.apple.appkit"]
-            
-//            // my macho parser isn't that good yet...
-//            if rootless, let bundleIDs = try? getLinkedBundleIDs(file: path) {
-//                injectedBundles.insert(contentsOf: bundleIDs.map { $0.lowercased() }, at: 0)
-//            }
-            
-//            injectedBundles.insert(contentsOf: ["com.apple.uikit", "com.apple.foundation", "com.apple.security"], at: 0)
+            tprint("removed jetsam")
 
-            
-            tprint("loaded bundles", injectedBundles)
-                        
-            if !safeMode {
-                dylibs = tweaks
-                    .compactMap {
-                         if $0.bundles.contains(bundleID) || $0.bundles.contains(where: { injectedBundles.contains($0) }) {
-                             return $0.path
-                         }
-                        return nil
-                    }
-            }
-            
-            tprint("got tweaks \(bundleID) \(tweaks)")
-            
-            if springboard {
-                tprint("Injecting sb hook \(sbHookPath)")
-                dylibs.insert(sbHookPath, at: 0)
-            }
-            
-            if !tweaks.isEmpty {
-                let env = dylibs.joined(separator: ":")
-                tprint("adding env \(env)")
-                addDYLDEnv(env)
-            }
+            if let bundleID = findBundleID(path: path) {
+
+                tprint("found bundle \(path) \(bundleID)")
+
+                var dylibs = [String]()
+                var injectedBundles = ["com.apple.uikit", "com.apple.foundation", "com.apple.security", "com.apple.appkit"]
+
+    //            // my macho parser isn't that good yet...
+    //            if rootless, let bundleIDs = try? getLinkedBundleIDs(file: path) {
+    //                injectedBundles.insert(contentsOf: bundleIDs.map { $0.lowercased() }, at: 0)
+    //            }
+
+    //            injectedBundles.insert(contentsOf: ["com.apple.uikit", "com.apple.foundation", "com.apple.security"], at: 0)
+
+
+                tprint("loaded bundles", injectedBundles)
+
+                if !safeMode {
+                    dylibs = tweaks
+                        .compactMap {
+                             if $0.bundles.contains(bundleID) || $0.bundles.contains(where: { injectedBundles.contains($0) }) {
+                                tprint("tweaks $0.path", $0.path)
+                                 return $0.path
+                             }
+                            return nil
+                        }
+                }
+
+                tprint("got tweaks \(bundleID) \(tweaks)")
+
+                if springboard {
+                    tprint("Injecting sb hook \(sbHookPath)")
+                    dylibs.insert(sbHookPath, at: 0)
+                }
+
+                if !tweaks.isEmpty {
+                    let env = dylibs.joined(separator: ":")
+                    tprint("adding env \(env)")
+                    addDYLDEnv(env)
+                }
             
         } else {
             let executableName = (path as NSString).lastPathComponent
             tprint("using exec name \(path) \(executableName)")
-            
+
             var injectedBundles = ["com.apple.uikit", "com.apple.foundation", "com.apple.security", "com.apple.appkit"]
            
 //            // my macho parser isn't that good yet...
@@ -235,7 +237,7 @@ func spawn_replacement(
             
             tprint("got tweaks \(executableName) \(tweaks)")
             
-            if !tweaks.isEmpty {
+            if !tweaks.isEmpty{
                 let env = tweaks.joined(separator: ":")
                 tprint("adding env \(env)")
                 addDYLDEnv(env)
@@ -264,8 +266,10 @@ func spawn_replacement(
         tprint("got extension", String(cString: exten))
         envp.append("SANDBOX_EXTENSION="+String(cString: exten))
     }
-    
-    tprint("----------\n new env is \n\(envp.joined(separator: "\n"))\n----------")
+     let bundle = Bundle.main
+     let packageName = bundle.bundleIdentifier
+     tprint("Package name is \(packageName)")
+    tprint("----------\n new env is \n\(envp.joined(separator: "\n"))   Package \(packageName)\n----------")
     
     var envp_c: [UnsafeMutablePointer<CChar>?] = envp
         .compactMap { ($0 as NSString).utf8String }

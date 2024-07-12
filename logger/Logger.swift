@@ -87,6 +87,7 @@ public func tprint(
         }
         out.append(separator)
     }
+    log(items: items, file: file, line: line, separator: separator)
     TextLog.shared.write("ElleKit-[\(file)\(line)] \(out)")
 }
 

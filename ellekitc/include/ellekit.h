@@ -12,7 +12,12 @@
 
 #import "sandbox.h"
 
+//#import "xpc.h"
+#if __has_include(<xpc/xpc.h>)
+#import <xpc/xpc.h>
+#else
 #import "xpc.h"
+#endif
 
 struct sCSRange {
    unsigned long long location;
